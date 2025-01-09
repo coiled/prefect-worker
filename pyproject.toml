@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prefect-coiled"
+description = "Prefect integrations for interacting with Coiled."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache License 2.0" }
+keywords = ["prefect"]
+authors = [{ name = "Prefect Technologies, Inc.", email = "help@prefect.io" }]
+classifiers = [
+  "Natural Language :: English",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+  "prefect>=3.1.1",
+  "coiled>=1.71.0",
+]
+dynamic = ["version"]
+
+[project.entry-points."prefect.collections"]
+prefect_coiled = "prefect_coiled"
