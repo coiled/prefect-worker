@@ -1,0 +1,27 @@
+name: prefect-worker
+prefect-version: 3.1.11
+
+definitions:
+  arm: &arm true
+  gpu: &gpu false
+
+build:
+- prefect_coiled.deployments.steps.build_package_sync_senv:
+    id: coiled_senv
+    arm: *arm
+    gpu: *gpu
+
+pull:
+- prefect.deployments.steps.set_working_directory:
+    directory: /scratch/batch
+
+deployments:
+- name: example-coiled-deploy
+  flow_name: example-coiled-flow
+  entrypoint: example_flow:my_flow
+  work_pool:
+    name: example-coiled-pool
+    job_variables:
+      arm: *arm
+      gpu: *gpu
+      software: '{{ coiled_senv.name }}'
