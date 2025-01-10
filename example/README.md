@@ -1,7 +1,7 @@
 # Installation
 
 ```bash
-pip install prefect coiled coiled-prefect
+pip install prefect coiled prefect-coiled
 ```
 
 If you haven't used Prefect Cloud before, you'll need to create an account and log in:
