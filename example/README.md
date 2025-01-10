@@ -4,6 +4,12 @@
 pip install prefect coiled coiled-prefect
 ```
 
+If you haven't used Prefect Cloud before, you'll need to create an account and log in:
+
+```bash
+prefect cloud login
+```
+
 If you haven't used Coiled before, you'll need to create a Coiled account and log in:
 
 ```bash

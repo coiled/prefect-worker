@@ -145,13 +145,13 @@ class CoiledVariables(BaseVariables):
 
 class CoiledWorkerResult(BaseWorkerResult):
     """
-    The result of a Cloud Run worker V2 job.
+    The result of a Coiled worker job.
     """
 
 
 class CoiledWorker(BaseWorker):
     """
-    The Cloud Run worker V2.
+    The Coiled worker.
     """
 
     type = "coiled"
@@ -159,7 +159,7 @@ class CoiledWorker(BaseWorker):
     job_configuration_variables = CoiledVariables
     _description = "Execute flow runs via Coiled."  # noqa
     _display_name = "Coiled"
-    _documentation_url = "https://docs.prefect.io/integrations/TODO"
+    _documentation_url = "https://github.com/coiled/prefect-worker/blob/main/README.md"
     _logo_url = "https://docs.coiled.io/_static/Coiled-Logo.svg"  # noqa
 
     async def run(
