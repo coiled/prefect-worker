@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "prefect>=3.1.1",
-  "coiled>=1.71.0",
+  "coiled>=1.71.1",
 ]
 dynamic = ["version"]
 
