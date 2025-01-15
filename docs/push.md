@@ -26,8 +26,14 @@ or via the web app UI at https://cloud.coiled.io/settings/setup
 
 # Create the Prefect push work pool and deployment
 
+To create the push work pool:
 ```bash
 prefect work-pool create --type coiled:push --provision-infra 'example-coiled-pool'
+```
+
+and then with `example/` as your working directory, you can create the example deployment:
+
+```bash
 prefect deploy --prefect-file prefect.yaml
 ```
 
