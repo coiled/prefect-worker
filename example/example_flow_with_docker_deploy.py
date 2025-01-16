@@ -51,22 +51,8 @@ if __name__ == "__main__":
 
     gpu = True
     arm = False
-    arch = (
-        coiled.types.ArchitectureTypesEnum.ARM64
-        if arm
-        else coiled.types.ArchitectureTypesEnum.X86_64
-    )
 
-    with coiled.Cloud() as cloud:
-        # TODO make a cleaner sync API for this
-        package_sync_env_alias = cloud._sync(
-            coiled.capture_environment.scan_and_create,
-            cloud=cloud,
-            force_rich_widget=True,
-            gpu_enabled=gpu,
-            architecture=arch,
-        )
-        senv_name = package_sync_env_alias["name"]
+    senv_name = coiled.create_package_sync_software_env(gpu=gpu, arm=arm)["name"]
 
     my_flow.deploy(
         name="my-coiled-deploy",
