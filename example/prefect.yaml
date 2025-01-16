@@ -17,7 +17,6 @@ pull:
 
 deployments:
 - name: example-coiled-deploy
-  flow_name: example-coiled-flow
   entrypoint: example_flow:my_flow
   work_pool:
     name: example-coiled-pool
