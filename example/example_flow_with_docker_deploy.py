@@ -46,6 +46,7 @@ if __name__ == "__main__":
     )
 
     # Option 3: Build a Coiled "package sync" environment and use that
+    # - this don't work because Flow.deploy() requires you to specify image
 
     import coiled
 
@@ -58,7 +59,8 @@ if __name__ == "__main__":
         name="my-coiled-deploy",
         work_pool_name="my-coiled-pool",
         job_variables={"arm": arm, "gpu": gpu, "software": senv_name},
-        # TODO see if these work and if they're all required
+        # FIXME we want to use "software" and no image, but prefect will raise
+        #   because image is required
         image="",
         build=False,
         push=False,
