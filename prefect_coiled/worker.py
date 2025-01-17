@@ -193,17 +193,24 @@ class CoiledWorker(BaseWorker):
             else {}
         )
 
+        workspace = configuration.workspace
+
         # submit the job to run on Coiled
         creds_config = {}
-        if configuration.credentials and configuration.credentials.api_token:
-            creds_config = {
-                "coiled.token": configuration.credentials.api_token.get_secret_value()
-            }
+        if configuration.credentials:
+            if configuration.credentials.api_token:
+                creds_config["coiled.token"] = configuration.credentials.api_token.get_secret_value()
+
+            # Workspace for the pool takes precedence (if set), then workspace for credentials.
+            # If neither is set, then Coiled will use the default workspace set for user in the Coiled web app.
+            if configuration.credentials.workspace and not configuration.workspace:
+                workspace = configuration.credentials.workspace
+                creds_config["coiled.workspace"] = workspace
 
         with dask.config.set(creds_config):
             run_info = run(
                 command=configuration.command,
-                workspace=configuration.workspace,
+                workspace=workspace,
                 container=configuration.image if not configuration.software else None,
                 software=configuration.software,
                 secret_env=configuration.env,
