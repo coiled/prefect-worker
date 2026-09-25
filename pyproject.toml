@@ -12,7 +12,7 @@ license = { text = "Apache License 2.0" }
 keywords = ["prefect", "coiled"]
 dependencies = [
   "prefect>=3.1.1",
-  "coiled>=1.71.1",
+  "coiled>=1.136.0",
 ]
 dynamic = ["version"]
 
