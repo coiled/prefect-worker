@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-import dask.config
 from anyio.abc import TaskStatus
-from pydantic import Field, PrivateAttr, field_validator
-
+from dask.utils import parse_bytes
 from prefect.utilities.asyncutils import run_sync_in_worker_thread
 from prefect.workers.base import (
     BaseJobConfiguration,
@@ -11,6 +9,7 @@ from prefect.workers.base import (
     BaseWorker,
     BaseWorkerResult,
 )
+from pydantic import Field, PrivateAttr, field_validator
 
 from .credentials import CoiledCredentials
 
@@ -79,7 +78,7 @@ class CoiledWorkerJobConfiguration(BaseJobConfiguration):
     @classmethod
     def _ensure_valid_memory(cls, value):
         try:
-            dask.utils.parse_bytes(value)
+            parse_bytes(value)
             return value
         except ValueError:
             raise ValueError(
@@ -181,6 +180,7 @@ class CoiledWorker(BaseWorker):
         """
         logger = self.get_flow_run_logger(flow_run)
 
+        from coiled import Cloud
         from coiled.batch import run, wait_for_job_done
 
         # clean up labels so they can be applied as Coiled tags
@@ -193,17 +193,16 @@ class CoiledWorker(BaseWorker):
             else {}
         )
 
-        # submit the job to run on Coiled
-        creds_config = {}
-        if configuration.credentials and configuration.credentials.api_token:
-            creds_config = {
-                "coiled.token": configuration.credentials.api_token.get_secret_value()
-            }
+        token = (
+            configuration.credentials.api_token.get_secret_value()
+            if configuration.credentials and configuration.credentials.api_token
+            else None
+        )
 
-        with dask.config.set(creds_config):
+        with Cloud(token=token, workspace=configuration.workspace) as cloud:
             run_info = run(
                 command=configuration.command,
-                workspace=configuration.workspace,
+                cloud=cloud,
                 container=configuration.image if not configuration.software else None,
                 software=configuration.software,
                 secret_env=configuration.env,
@@ -217,16 +216,14 @@ class CoiledWorker(BaseWorker):
                 logger=logger,
                 **(configuration.additional_coiled_options or {}),
             )
-        job_id = run_info.get("job_id")
-        identifier = str(job_id)
+            job_id = run_info.get("job_id")
+            identifier = str(job_id)
 
-        if task_status:
-            task_status.started(identifier)
+            if task_status:
+                task_status.started(identifier)
 
-        # wait for Coiled job to be done
-        with dask.config.set(creds_config):
             job_state = await run_sync_in_worker_thread(
-                wait_for_job_done, job_id=job_id
+                wait_for_job_done, job_id=job_id, cloud=cloud
             )
 
         return CoiledWorkerResult(
